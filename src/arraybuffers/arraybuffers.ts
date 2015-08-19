@@ -119,7 +119,12 @@ export function stringToUtf8EncodedArrayBuffer(str:string) :ArrayBuffer {
   return ab.buffer;
 }
 
-export function split(buffer:ArrayBuffer, firstLen:number) :Array<ArrayBuffer> {
+export interface ArrayBufferPair {
+  first:ArrayBuffer;
+  last:ArrayBuffer;
+}
+
+export function split(buffer:ArrayBuffer, firstLen:number) :ArrayBufferPair {
   var bytes=new Uint8Array(buffer)
   var lastLen :number = buffer.byteLength-firstLen;
   var first = new Uint8Array(firstLen);
@@ -139,7 +144,15 @@ export function split(buffer:ArrayBuffer, firstLen:number) :Array<ArrayBuffer> {
     fromIndex=fromIndex+1;
   }
 
-  return [first.buffer, last.buffer];
+  return {first: first.buffer, last: last.buffer};
+}
+
+export function take(buffer:ArrayBuffer, firstLen:number) :ArrayBuffer {
+  return split(buffer, firstLen).first;
+}
+
+export function drop(buffer:ArrayBuffer, firstLen:number) :ArrayBuffer {
+  return split(buffer, firstLen).last;
 }
 
 /* Takes a number and returns a two byte (network byte order) representation
