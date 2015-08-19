@@ -99,7 +99,7 @@ export function hexStringToArrayBuffer(hexString:string) :ArrayBuffer {
 // Converts arrayBuffer which has a string encoded in UTF8 to a
 // Javascript string.
 //
-// Note:the array buffer should have a valid string with no zero inside.
+// Note: the array buffer should have a valid string with no zero inside.
 export function arrayBufferDecodedAsUtf8String(buffer:ArrayBuffer) :string {
   var bytes = new Uint8Array(buffer);
   var a :string[] = [];
@@ -119,45 +119,17 @@ export function stringToUtf8EncodedArrayBuffer(str:string) :ArrayBuffer {
   return ab.buffer;
 }
 
-export interface ArrayBufferPair {
-  first:ArrayBuffer;
-  last:ArrayBuffer;
-}
-
-export function split(buffer:ArrayBuffer, firstLen:number) :ArrayBufferPair {
-  var bytes=new Uint8Array(buffer)
+// Splits an ArrayBuffer into two at a given offset
+export function split(buffer:ArrayBuffer, firstLen:number) :[ArrayBuffer, ArrayBuffer] {
   var lastLen :number = buffer.byteLength-firstLen;
-  var first = new Uint8Array(firstLen);
-  var last = new Uint8Array(lastLen);
-  var fromIndex :number = 0;
-  var toIndex :number = 0;
-  while(toIndex < first.length) {
-    first[toIndex] = bytes[fromIndex];
-    toIndex=toIndex+1;
-    fromIndex=fromIndex+1;
-  }
+  var first = buffer.slice(0, firstLen);
+  var last = buffer.slice(firstLen);
 
-  toIndex=0;
-  while(toIndex < last.length) {
-    last[toIndex] = bytes[fromIndex];
-    toIndex=toIndex+1;
-    fromIndex=fromIndex+1;
-  }
-
-  return {first: first.buffer, last: last.buffer};
+  return [first, last];
 }
 
-export function take(buffer:ArrayBuffer, firstLen:number) :ArrayBuffer {
-  return split(buffer, firstLen).first;
-}
-
-export function drop(buffer:ArrayBuffer, firstLen:number) :ArrayBuffer {
-  return split(buffer, firstLen).last;
-}
-
-/* Takes a number and returns a two byte (network byte order) representation
- * of this number.
- */
+// Takes a number and returns a two byte (network byte order) representation
+// of this number.
 export function encodeShort(len:number) :ArrayBuffer {
   var bytes = new Uint8Array(2);
   bytes[0] = Math.floor(len >> 8);
@@ -165,9 +137,8 @@ export function encodeShort(len:number) :ArrayBuffer {
   return bytes.buffer;
 }
 
-/* Takes a two byte (network byte order) representation of a number and returns
- * the number.
- */
+ // Takes a two byte (network byte order) representation of a number and returns
+ // the number.
  export function decodeShort(buffer:ArrayBuffer) :number {
   var bytes = new Uint8Array(buffer);
   var result = (bytes[0] << 8) | bytes[1];
