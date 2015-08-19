@@ -4,6 +4,7 @@
 // e.g.
 //  import Transformer = require('uproxy-obfuscators/transformer');
 /// <reference path='../../../third_party/uTransformers/utransformers.d.ts' />
+/// <reference path='../../../third_party/typings/webcrypto/WebCrypto.d.ts' />
 
 import logging = require('../logging/logging');
 import Defragmenter = require('./defragmenter');
@@ -110,8 +111,8 @@ class PacketLengthShaper {
 //      log.debug("Fragment %1 %2", firstLength, restLength);
       var parts = arraybuffers.split(buffer, firstLength);
   //        log.debug("Parts %1 %2", parts[0].byteLength, parts[1].byteLength);
-      var first = this.makeFragments_(parts[0], firstLength+headerLength);
-      var rest = this.makeFragments_(parts[1], restLength+headerLength);
+      var first = this.makeFragments_(parts.first, firstLength+headerLength);
+      var rest = this.makeFragments_(parts.last, restLength+headerLength);
   //        log.debug("Fragmented %1 %2 %3", first.length+rest.length, first[0].byteLength, rest[0].byteLength);
       var fragments=first.concat(rest);
       this.fixFragments_(fragments);
@@ -152,13 +153,13 @@ class PacketLengthShaper {
       }
     } else {
       var parts = arraybuffers.split(buffer, 2);
-      var lengthBytes = parts[0];
+      var lengthBytes = parts.first;
       var length = arraybuffers.decodeShort(lengthBytes);
-      var rest = parts[1];
+      var rest = parts.last;
       if(rest.byteLength > length) {
         parts=arraybuffers.split(rest, length);
   //      log.info('<- %1 %2', length, parts[0].byteLength);
-        return [parts[0]];
+        return [parts.first];
       } else {
         return [rest];
       }

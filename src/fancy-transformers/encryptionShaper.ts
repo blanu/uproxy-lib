@@ -4,6 +4,7 @@
 // e.g.
 //  import Transformer = require('uproxy-obfuscators/transformer');
 /// <reference path='../../../third_party/uTransformers/utransformers.d.ts' />
+/// <reference path='../../../third_party/typings/webcrypto/WebCrypto.d.ts' />
 
 import logging = require('../logging/logging');
 import arraybuffers = require('../arraybuffers/arraybuffers');
@@ -65,9 +66,9 @@ export class EncryptionShaper implements Transformer {
   }
 
   public restore = (buffer:ArrayBuffer) :ArrayBuffer[] => {
-    var parts :ArrayBuffer[] = arraybuffers.split(buffer, 16);
-    var iv=parts[0];
-    var ciphertext=parts[1];
+    var parts = arraybuffers.split(buffer, 16);
+    var iv=parts.first;
+    var ciphertext=parts.last;
     return [this.decrypt_(iv, ciphertext)];
   }
 
@@ -107,12 +108,12 @@ export class EncryptionShaper implements Transformer {
     var plaintext :ArrayBuffer = cbc.decrypt(ciphertext);
 
     var parts = arraybuffers.split(plaintext, 2);
-    var lengthBytes = parts[0];
+    var lengthBytes = parts.first;
     var length = arraybuffers.decodeShort(lengthBytes);
-    var rest = parts[1];
+    var rest = parts.last;
     if(rest.byteLength > length) {
       parts=arraybuffers.split(rest, length);
-      return parts[0];
+      return parts.first;
     } else {
       return rest;
     }

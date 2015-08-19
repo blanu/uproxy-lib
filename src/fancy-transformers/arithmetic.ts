@@ -255,8 +255,8 @@ export class Decoder extends Coder {
   public decode = (input:ArrayBuffer) :ArrayBuffer => {
     this.input_=[];
 
-    var parts=arraybuffers.split(input, input.byteLength-2);
-    var size=arraybuffers.decodeShort(parts[1])-4;
+    var sizeBytes=arraybuffers.drop(input, input.byteLength-2);
+    var size=arraybuffers.decodeShort(sizeBytes)-4;
 //    console.log('Size: ', size);
 
     var bytes=new Uint8Array(input);
@@ -273,7 +273,7 @@ export class Decoder extends Coder {
       output[index]=this.output_[index];
     }
 
-    return arraybuffers.split(output.buffer, size)[0];
+    return arraybuffers.take(output.buffer, size);
   }
 
   private init_ = () :void => {
