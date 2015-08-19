@@ -255,7 +255,7 @@ export class Decoder extends Coder {
   public decode = (input:ArrayBuffer) :ArrayBuffer => {
     this.input_=[];
 
-    var sizeBytes=arraybuffers.drop(input, input.byteLength-2);
+    var sizeBytes=input.slice(-2);
     var size=arraybuffers.decodeShort(sizeBytes)-4;
 //    console.log('Size: ', size);
 
@@ -273,7 +273,7 @@ export class Decoder extends Coder {
       output[index]=this.output_[index];
     }
 
-    return arraybuffers.take(output.buffer, size);
+    return output.buffer.slice(0, size);
   }
 
   private init_ = () :void => {

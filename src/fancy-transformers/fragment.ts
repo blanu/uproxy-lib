@@ -64,13 +64,13 @@ class Fragment {
   static decodeFragment = (buffer:ArrayBuffer) :Fragment => {
 //    log.debug('Decode fragment %1 %2', buffer.byteLength, length);
     var parts = arraybuffers.split(buffer, 2);
-    var lengthBytes = parts.first;
+    var lengthBytes = parts[0];
     var length = arraybuffers.decodeShort(lengthBytes);
-    buffer = parts.last;
+    buffer = parts[1];
 
     parts=arraybuffers.split(buffer, 32);
-    var fragmentId=parts.first;
-    buffer=parts.last;
+    var fragmentId=parts[0];
+    buffer=parts[1];
 
     var fragmentNumber=takeByte_(buffer);
     buffer=dropByte_(buffer);
@@ -85,8 +85,8 @@ class Fragment {
 
     if(buffer.byteLength > length) {
       parts=arraybuffers.split(buffer, length);
-      payload=parts.first;
-      padding=parts.last;
+      payload=parts[0];
+      padding=parts[1];
 //      log.debug('shortened payoad %1 %2 %3', buffer.byteLength, length, payload.byteLength);
     } else if (buffer.byteLength === length) {
       payload=buffer;

@@ -67,8 +67,8 @@ export class EncryptionShaper implements Transformer {
 
   public restore = (buffer:ArrayBuffer) :ArrayBuffer[] => {
     var parts = arraybuffers.split(buffer, 16);
-    var iv=parts.first;
-    var ciphertext=parts.last;
+    var iv=parts[0];
+    var ciphertext=parts[1];
     return [this.decrypt_(iv, ciphertext)];
   }
 
@@ -108,12 +108,12 @@ export class EncryptionShaper implements Transformer {
     var plaintext :ArrayBuffer = cbc.decrypt(ciphertext);
 
     var parts = arraybuffers.split(plaintext, 2);
-    var lengthBytes = parts.first;
+    var lengthBytes = parts[0];
     var length = arraybuffers.decodeShort(lengthBytes);
-    var rest = parts.last;
+    var rest = parts[1];
     if(rest.byteLength > length) {
       parts=arraybuffers.split(rest, length);
-      return parts.first;
+      return parts[0];
     } else {
       return rest;
     }
